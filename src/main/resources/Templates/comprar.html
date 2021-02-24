@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprar Producto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+<body>
+<div class="justify-content-center" style="height:80vh"> <!-- CENTRALIZAR-->
+    <ul class="nav justify-content-end">
+        <li class="nav-item">
+            <a class="nav-link active">Comprar</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/ventasR">Ventas Realizadas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/adminP">Administrar productos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/carrito">Carrito</a>
+        </li>
+    </ul>
+
+    <div > <!-- class="d-flex align-items-center justify-content-center" style="height:80vh"-->
+         <h1 style="text-align:center">Listado de Productos</h1>
+         <table class="table">
+             <thead>
+             <tr>
+                 <th scope="col">ID Producto</th>
+                 <th scope="col">Producto</th>
+                 <th scope="col">Precio(RD$)</th>
+                 <th scope="col">Cantidad</th>
+                 <th scope="col">Accion</th>
+             </tr>
+             </thead>
+             <tbody>
+             <tr th:each= "p : ${listaP}">
+                 <form action="/addCarrito" method="POST">
+                 <td><input name="id" type="text" readonly th:value="${p.id}">ID</td>
+                 <td th:text="${p.nombre}">Nombre</td>
+                 <td th:text="${p.precio}">Precio</td>
+                 <td><input name="cant" type="number"  step="1" min="1" max="1000" required="required">Cantidad</td></td>
+                 <td><button type="submit" class="btn btn-primary">Agregar</button></td>
+                 </form>
+             </tr>
+             </tbody>
+         </table>
+
+      </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>
+

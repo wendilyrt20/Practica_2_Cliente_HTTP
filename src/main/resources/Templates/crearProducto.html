@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Producto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+<body>
+<div>
+
+<div class="d-flex align-items-center justify-content-center " style="height:80vh">
+
+    <form action="/producto/new" method="POST" th:each="p: ${producto}">
+        <h1>Crear Producto</h1>
+            <div>
+
+                <div class="mb-3">
+                    <input name ="idp" type="text" th:value="${p.id}" class="form-control" style="display:none" >
+                </div>
+
+                <div class="mb-3">
+                    <label for="productname" class="form-label">Nombre</label>
+                    <input name ="productname" type="text" th:value="${p.nombre}" class="form-control" id="productname" required="required">
+                </div>
+             <div class="mb-3">
+                  <label for="price" class="form-label">Precio</label>
+                  <input name="price" type="number" th:value="${p.precio}" class="form-control" id="price" required="required">
+             </div>
+                <div class="mb-3">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input name="cantidad" type="number" th:value="${p.cant}"  class="form-control" id="cantidad" min="1" max="1000" required="required">
+                </div>
+           </div>
+        <button type="submit" class="btn btn-success">Sign in</button>
+        <button type="cancel" class="btn btn-danger">Cancel</button>
+    </form>
+
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>
+
