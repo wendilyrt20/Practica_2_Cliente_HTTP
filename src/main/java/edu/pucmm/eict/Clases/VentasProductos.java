@@ -10,14 +10,16 @@ public class VentasProductos {
     private Date FechaCompra;
     private String nombreCliente;
     private List<CarroCompra> listaCarrito;
+    double total ;
     public static int incremento=1;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-    public VentasProductos(Date fechaCompra, String nombreCliente) {
+    public VentasProductos(Date fechaCompra, String nombreCliente, double total) {
         this.id = incremento;
         FechaCompra = fechaCompra;
         this.nombreCliente = nombreCliente;
+        this.total = total;
         this.listaCarrito = new ArrayList<>();
         incremento++;
     }
@@ -54,7 +56,14 @@ public class VentasProductos {
         this.listaCarrito = listaCarrito;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+//////////////////////////////////////////////////////////////////////////////////////////////
 
     public void addCarritoV(CarroCompra carro){
         listaCarrito.add(carro);

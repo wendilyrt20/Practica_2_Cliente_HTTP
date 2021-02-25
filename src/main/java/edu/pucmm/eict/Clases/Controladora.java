@@ -80,6 +80,9 @@ public class Controladora{
         listaProductos.remove(p);
 
     }
+
+
+
 /*
     public void borrarProducto(int id, String name, BigDecimal precio,int cant){
         ArrayList<Producto> producto = new ArrayList<>();

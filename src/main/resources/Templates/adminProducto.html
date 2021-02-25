@@ -7,15 +7,10 @@
     <link href="/publico/css/adminProducto.css" rel="stylesheet" type="txt/css">
     <link href="/css/graf.css" rel="stylesheet" type="text/css"/>
 
-    <style>
-        * {
-        color:"green"
-        }
-     </style>
 
 </head>
-<body>
-<div class="justify-content-center" style="height:80vh"> <!-- CENTRALIZAR-->
+<body class="d-flex align-items-center justify-content-center" style="height:80vh">  <!-- style="background-color:powderblue;"-->
+<div class="justify-content-end" style="height:80vh"> <!-- CENTRALIZAR-->
 
     <ul class="nav justify-content-end" >
         <li class="nav-item">
@@ -29,12 +24,16 @@
         </li>
         <li class="nav-item">
             <a class="nav-link active" href="/carrito">Carrito</a>
+            <span class="badge badge-primary" th:text="${cantidad}"></span>
         </li>
     </ul>
 
     <div > <!-- class="d-flex align-items-center justify-content-center" style="height:80vh"-->
       <!--  <image src="https://cdn1.iconfinder.com/data/icons/grocery-store-filled/64/Grocery_Shop-36-512.png" Class="logo" alt="carrito"/> -->
         <h1 style="text-align:center">CRUD Productos</h1>
+
+        <h5>  </h5>
+
             <a class="nav-link active" href="/crearProd">Crear Producto</a>
         <table class="table">
             <thead>

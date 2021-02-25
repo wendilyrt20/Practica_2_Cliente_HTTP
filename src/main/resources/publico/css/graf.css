@@ -1,4 +1,14 @@
 
-.main{
+.img{
+    height: 100px;
 
 }
+.nav justify-content-end{
+   column-width: 100px;
+}
+
+.main {
+    justify-content: end;
+    height: 80vh;
+    padding: 25px;
+    }

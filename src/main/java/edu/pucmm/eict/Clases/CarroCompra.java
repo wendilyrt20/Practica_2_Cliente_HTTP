@@ -57,7 +57,15 @@ public class CarroCompra {
         }
     }
 
+    public int buscarCantCarrito(CarroCompra carro){
+        int valor=0;
 
+        for (Producto pro: carro.getListaProductos()) {
+            valor += pro.getCant();
+        }
+
+        return valor;
+    }
 
 
 }

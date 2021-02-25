@@ -5,9 +5,8 @@
     <title>Listado Ventas</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 </head>
-<body>
-<div> <!-- CENTRALIZAR-->
-
+<body class="d-flex align-items-center justify-content-center" style="height:80vh"> <!-- style="background-color:powderblue;"-->
+<div class="justify-content-center" style="height:80vh"> <!-- CENTRALIZAR-->
 
     <ul class="nav justify-content-end" >
         <li class="nav-item">
@@ -21,16 +20,18 @@
         </li>
         <li class="nav-item">
             <a class="nav-link active" href="/carrito">Carrito</a>
+            <span class="badge badge-primary" th:text="${cantidad}"></span>
         </li>
     </ul>
     <h1 style="text-align:center">Listado Ventas Realizadas</h1>
 
-    <div th:each=" v: ${listaV}"> <!-- class="d-flex align-items-center justify-content-center" style="height:80vh"-->
+
+    <div th:each="v: ${listaV}"> <!-- class="d-flex align-items-center justify-content-center" style="height:80vh"-->
         <!--  <image src="https://cdn1.iconfinder.com/data/icons/grocery-store-filled/64/Grocery_Shop-36-512.png" Class="logo" alt="carrito"/> -->
 
             <div>
-                <h5 th:text="${v.nombreCliente}" ></h5>
-                <h5  th:text="${v.FechaCompra}"></h5>
+                <h6 th:text="${v.nombreCliente}"></h6>
+                <h6  th:text="${v.FechaCompra}"></h6>
             </div>
 
       <!--  <form>-->
@@ -45,22 +46,21 @@
                 </tr>
                 </thead>
                 <tbody>    <!--VALORES TABLA LLENADO -->
-                <tr th:each="p : ${carrito.listaProductos}">
+                <tr th:each="p : ${carrito.listaProductos}" >
                     <td th:text="${p.nombre}">Producto</td>
                     <td th:text="${p.precio}">Precio</td>
                     <td th:text="${p.cant}">Cantidad</td>
                     <td th:text="${(p.cant) * p.precio}">Total</td>
                 </tr>
-                <!--
                 <tr>
                 <tfoot>
                 <td> </td>
                 <td> </td>
                 <td scope="row">Total: </td>
-                <td >Total</td>
+                <td th:text="${v.total}">Total</td>
                 </tfoot>
                 </tr>
-                -->
+
                 </tbody>
             </table>
 
