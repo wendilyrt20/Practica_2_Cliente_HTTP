@@ -1,15 +1,19 @@
 package edu.pucmm.eict;
 
 import edu.pucmm.eict.Clases.*;
+import edu.pucmm.eict.DataBase.DataBase;
 import io.javalin.Javalin;
 import io.javalin.core.util.RouteOverviewPlugin;
 import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinFreemarker;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
+import org.jasypt.util.text.StrongTextEncryptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.servlet.http.Cookie;
 import javax.swing.*;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -19,23 +23,38 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 public class Main {
     static String tempURI = "";
     static String path="";
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+
+////////////////////////BDD////////////////////////////////////////////////
+
+        //  DataBase.stopDb();
+        DataBase.startDb(); //Inicio server
+
+        DataBase.crearTablasProductos();
+        DataBase.crearTablaUsuario();
+        DataBase.crearTablaVenta();
+        DataBase.crearTablaComprado();
+////////////////////////////////////////////////////////////////////////////
+
+
         Controladora control = new Controladora(); //Instancia controladora
-        /////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //Usuario user = new Usuario("Wendily", "admin", "admin");
-        Producto p1 = new Producto("Carro1", 100.0, 10);
-        Producto p2 = new Producto("Carro2", 100.0, 10);
-        Producto p3 = new Producto("Carro3", 100.0, 10);
-
-        control.addProducto(p1);
-        control.addProducto(p2);
-        control.addProducto(p3);
-
+        Usuario userAdmin = new Usuario("Wendily", "admin", "admin");
+        Producto p1 = new Producto(1,"Carro1", 500.0, 80);
+        Producto p2 = new Producto(2,"Carro2", 300.0, 10);
+        Producto p3 = new Producto(3,"Carro3", 100.0, 15);
+/*
+        control.addProductoDB(p1);
+        control.addProductoDB(p2);
+        control.addProductoDB(p3);
+*/
         //control.addUsuario(user);
 
+        control.mostrarProducto();
+        control.mostrarVentas();
+        control.getListaUsuario().clear();
+        //control.addUserDB(userAdmin);
 
-        System.out.println("ndjksdnfjknsdjkfnkjdsnfdf");
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         JavalinRenderer.register(JavalinThymeleaf.INSTANCE, ".html");//Instancia motor de plantilla Thymeleaf.
 
@@ -46,22 +65,22 @@ public class Main {
         app.start(7000);
         System.out.println("holaaaaaa");
 
-////////////////////////////////////////////////////////////////////////////////////////
 
         app.get("/", ctx -> {
+
             int cantidad = 0;
+            //control.mostrarProducto();
             List<Producto> producto = control.getListaProductos();
             Map<String,Object> modelo = new HashMap<>();
             modelo.put("listaP", producto);
             if(ctx.sessionAttribute("SesionCarrito")!= null){
                CarroCompra c = ctx.sessionAttribute("SesionCarrito");
                 cantidad= c.buscarCantCarrito(c);
-                //modelo.put("cantidad",cantidad);
+                control.getListaProductos().removeAll(control.getListaProductos());
+                control.mostrarProducto();
                 System.out.println(" PPPP--SIZE P CARRITOOOOO--->" + cantidad);
 
             }
-            System.out.println(" PPPP----->"  );
-            System.out.println(" PPPP--SIZE P CARRITOOOOO--->" + cantidad);
             ctx.sessionAttribute("cantidad", cantidad);
             modelo.put("cantidad",cantidad);
             ctx.render("/templates/comprar.html", modelo);
@@ -71,19 +90,19 @@ public class Main {
             int id= Integer.parseInt(ctx.formParam("id"));
             int cant = Integer.parseInt(ctx.formParam("cant"));
             Producto aux= control.buscarProducto(id);
-            Producto pCarrito = new Producto( aux.getNombre(), aux.getPrecio(), cant );
+            Producto pCarrito = new Producto(aux.getId(),aux.getNombre(), aux.getPrecio(), cant );
 
             //Crar sesion para carrito
-            if (ctx.sessionAttribute("SesionCarrito")== null) {
+            if (ctx.sessionAttribute("SesionCarrito")== null) { //comprobación de sesión carrito
                CarroCompra carrito = new CarroCompra();
                carrito.addCarrito(pCarrito);
-                ctx.sessionAttribute("SesionCarrito", carrito); //sesion creada
+                ctx.sessionAttribute("SesionCarrito", carrito); //crear sesión
                 System.out.println("SESION CARRITO CREADA");
                 System.out.println("SIZE: " + carrito.getListaProductos().size());
                 ctx.redirect("/");
             }
-            else if (ctx.sessionAttribute("SesionCarrito") != null){
-                CarroCompra carrito = ctx.sessionAttribute("SesionCarrito");
+            else if (ctx.sessionAttribute("SesionCarrito") != null){ //ya está creada
+                CarroCompra carrito = ctx.sessionAttribute("SesionCarrito"); //añadir a carrito en la sesion creada
                 carrito.addCarrito(pCarrito);
                 System.out.println("Sesion carrito estuvo creada");
                 System.out.println("Carrito--> " + carrito.getListaProductos().size());
@@ -119,18 +138,18 @@ public class Main {
 
         app.get("/ventasR",ctx -> {
             if (ctx.sessionAttribute("admin") == null) {
-                System.out.println("NO SESIONnnnnnnnnnnnn= NULL");
+                System.out.println(" SESION= NULL");
                 tempURI= ctx.req.getRequestURI();
                 ctx.render("/Templates/login.html");
 
             }
-            else if ((ctx.sessionAttribute("admin") != null) && (ctx.sessionAttribute("SesionCarrito") ==null ) ){
-                List<VentasProductos> venta = ctx.sessionAttribute("ventas");
+            else if (ctx.sessionAttribute("admin") != null){
+                control.mostrarVentas();
+                List<VentasProductos> venta = control.getListaVentasProductos();
                 System.out.println("VENTA SESION BIEN");
                 System.out.println("ADMIN PRODUCT");
                 int cantidad = ctx.sessionAttribute("cantidad");
                 CarroCompra car = ctx.sessionAttribute("SesionCarrito");
-
                 Map<String,Object> modelo = new HashMap<>();
                 modelo.put("listaV", venta);
                 modelo.put("cantidad",cantidad);
@@ -152,9 +171,10 @@ public class Main {
                 ctx.render("/Templates/login.html");
             }
             else if (ctx.sessionAttribute("admin") != null){
+                control.getListaProductos().clear();
+                control.mostrarProducto();
                 List<Producto> product = control.getListaProductos();
                 Map<String,Object> modelo = new HashMap<>();
-                //System.out.println("bla bla bla"+ctx.sessionAttribute("admin").toString());
                 modelo.put("listaP", product);
                 System.out.println("ADMIN PRODUCT");
                 int cantidad = ctx.sessionAttribute("cantidad");
@@ -183,9 +203,16 @@ public class Main {
                 Usuario admin = new Usuario("admin", usuario, pass);
                 control.addUsuario(admin);
                 ctx.sessionAttribute("admin", admin);
-                ctx.redirect(tempURI);
-            }
-            else {
+
+                if ( ctx.formParam("rememberMe")!= null){
+                    StrongTextEncryptor enc = new StrongTextEncryptor();
+                    enc.setPassword("pass");
+                    String adminEncryptor = enc.encrypt(admin.getPassword());
+                    ctx.cookie("rememberMe", adminEncryptor,60480); //Coockie con duracion 1 semana
+                    ctx.result("Cookie creada...");
+                    ctx.redirect(tempURI);
+                }
+            } else {
                 ctx.redirect("/adminP");
             }
         });
@@ -194,16 +221,21 @@ public class Main {
         app.post("/comprar/carrito", ctx -> {
             String user = ctx.formParam("user");
             Date date = new Date();
+            java.sql.Date datesql = new java.sql.Date(date.getTime());
             CarroCompra carro = ctx.sessionAttribute("SesionCarrito");
             Double total = carro.cantProducto(carro.getListaProductos());
 
-                VentasProductos venta = new VentasProductos(date,user,total);
-                venta.addCarritoV(carro);
-                control.addVenta(venta);
-                ctx.sessionAttribute("ventas", control.getListaVentasProductos());
-                    System.out.println("VENTA REALIZADA " + venta.getNombreCliente());
-                    System.out.println("---->" + control.getListaVentasProductos().size());
-                    System.out.println(venta.getListaCarrito());
+                VentasProductos venta = new VentasProductos(datesql,user,total);
+                control.addVentaDB(venta);
+            int id_venta = control.buscarVentaDB();
+            System.out.println("CARRITOO size productos-> " + carro.getListaProductos().size());
+            for (Producto p : carro.getListaProductos()) {
+                control.addCompradoDB(id_venta,p.getId(),p.getCant());
+            }
+               // ctx.sessionAttribute("ventas", control.getListaVentasProductos());
+                    System.out.println("VENTA REALIZADA--> ID VENTA--> " + id_venta);
+                   // System.out.println("---->" + control.getListaVentasProductos().size());
+                 //   System.out.println(venta.getListaCarrito());
                 ctx.sessionAttribute("SesionCarrito",null);
                 ctx.redirect("/");
 
@@ -215,34 +247,33 @@ public class Main {
 
         app.get("/crearProd", ctx -> {
             System.out.println("Aqui en crear productos");
-            Producto producto = new Producto(" ",0.0,0);
-            producto.setId(0);
+           Producto producto = new Producto(0," ",0.0,0);
             Map<String, Object> modelo = new HashMap<>();
             modelo.put("producto", producto);
-
-
-            ctx.render("/Templates/crearProducto.html", modelo);
+            ctx.render("/Templates/crearProducto.html",modelo);
         });
 
         app.post("/producto/new", ctx -> {
             int id = ctx.formParam("idp",Integer.class).get();
             String nombre= ctx.formParam("productname");
-                     System.out.println("AGREGANDO NOMBRE AL PRODUCTO");
              Double precio = ctx.formParam("price", Double.class).get();
-                 System.out.println("AGREGANDO NOMBRE AL PRODUCTO");
             Integer  cantidad = Integer.parseInt(ctx.formParam("cantidad"));
-            System.out.println("AGREGANDO NOMBRE AL PRODUCTO");
+            System.out.println("------------------------->"+ id);
 
-            if (control.buscarProducto(id)!= null ){
-                System.out.println("MODIFUCANDO");
-                Producto p = control.buscarProducto(id);
-                p.setNombre(nombre);
-                p.setPrecio(precio);
-                p.setCant(cantidad);
+            if (control.buscarProducto(id) !=null) {
+                System.out.println("MODIFICANDO PRODUCTO");
+                Producto producto= control.buscarProducto(id);
+                producto.setCant(cantidad);
+                producto.setPrecio(precio);
+                producto.setNombre(nombre);
+                control.editarProducto(producto);
+                control.getListaProductos().clear();
+                control.mostrarProducto();
             }
             else if(control.buscarProducto(id) == null){
-                Producto producto=new Producto(nombre,precio,cantidad);
-                control.addProducto(producto);
+                Producto producto =new Producto(id,nombre,precio,cantidad);
+                control.addProductoDB(producto);
+                System.out.println("NUEVO PRODUCTO");
             }
             ctx.redirect("/adminP");
         });

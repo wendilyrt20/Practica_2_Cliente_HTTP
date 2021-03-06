@@ -2,16 +2,16 @@ package edu.pucmm.eict.Clases;
 
 public class Usuario {
     String nombre;
-    String usuaio;
+    String usuario;
     String password;
 
     public Usuario() {
     }
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-    public Usuario(String nombre, String usuaio, String password) {
+    public Usuario(String nombre, String usuario, String password) {
         this.nombre = nombre;
-        this.usuaio = usuaio;
+        this.usuario = usuario;
         this.password = password;
     }
 
@@ -24,11 +24,11 @@ public class Usuario {
     }
 
     public String getUsuaio() {
-        return usuaio;
+        return usuario;
     }
 
-    public void setUsuaio(String usuaio) {
-        this.usuaio = usuaio;
+    public void setUsuaio(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getPassword() {

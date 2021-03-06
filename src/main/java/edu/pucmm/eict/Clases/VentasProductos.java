@@ -6,29 +6,27 @@ import java.util.Date;
 import java.util.List;
 
 public class VentasProductos {
-    private long id;
+    private int id;
     private Date FechaCompra;
     private String nombreCliente;
     private List<CarroCompra> listaCarrito;
     double total ;
-    public static int incremento=1;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     public VentasProductos(Date fechaCompra, String nombreCliente, double total) {
-        this.id = incremento;
+        this.id = id;
         FechaCompra = fechaCompra;
         this.nombreCliente = nombreCliente;
         this.total = total;
         this.listaCarrito = new ArrayList<>();
-        incremento++;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -67,16 +65,6 @@ public class VentasProductos {
 
     public void addCarritoV(CarroCompra carro){
         listaCarrito.add(carro);
-    }
-
-    public double cantProducto(List<VentasProductos>ven) {
-        double valor=0.0;
-        for (CarroCompra car: listaCarrito) {
-            for (Producto producto : car.getListaProductos()) {
-                valor = valor + (producto.getCant() * producto.getPrecio());
-            }
-        }
-        return valor;
     }
 
 

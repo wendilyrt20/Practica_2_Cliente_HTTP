@@ -7,16 +7,21 @@ public class Producto {
     private String nombre;
     private Double precio;
     private int cant; //cantidad de producto en stock
-    public static int incremento =1;
+    //public static int incremento =1;
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-    public Producto(String nombre, Double precio, int cant) {
-        this.id = incremento;
+    public Producto(int id,String nombre, Double precio, int cant) {
+        this.id = id;
         this.nombre = nombre;
         this.precio = precio;
         this.cant = cant;
-        incremento++;
+      //  incremento++;
     }
+
+    public Producto() {
+
+    }
+
 
     public int getId() {
         return id;
